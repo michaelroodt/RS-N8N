@@ -1,0 +1,7 @@
+{
+  "name": "n8n-extra-deps",
+  "version": "1.0.0",
+  "dependencies": {
+    "n8n-nodes-resend": "^2.5.2"
+  }
+}
