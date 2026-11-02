@@ -1,0 +1,33 @@
+name: Sync main into dev
+
+# Copies every change on main (a release or an urgent fix) back into dev, so dev never falls
+# behind what is live. Part of the RoodtSquared release flow (RS-AgentStandards, release skill).
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-dev
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Merge main into dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Merge and push
+        run: |
+          git fetch origin main
+          git merge origin/main --no-edit -m "chore: sync dev with main"
+          git push origin dev
