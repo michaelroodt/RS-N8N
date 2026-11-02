@@ -1,0 +1,21 @@
+name: Merge Dependabot security fixes
+
+# Dependabot opens its pull requests against dev (the default branch). This merges them on its own
+# once their checks pass, so security fixes reach dev without a hand and go out with the next release.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    if: github.actor == 'dependabot[bot]' && github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
